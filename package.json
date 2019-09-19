@@ -1,0 +1,26 @@
+{
+  "name": "librify-backend",
+  "version": "0.0.1",
+  "description": "The backend for Librify",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JortvD/librify-backend.git"
+  },
+  "keywords": [
+    "back-end",
+    "librify"
+  ],
+  "author": "LibrifyOrg",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/JortvD/librify-backend/issues"
+  },
+  "homepage": "https://github.com/JortvD/librify-backend#readme",
+  "dependencies": {
+    "jsonwebtoken": "^8.5.1",
+    "mongodb": "^3.3.2",
+    "semver": "^6.3.0",
+    "shortid": "^2.2.15"
+  }
+}
