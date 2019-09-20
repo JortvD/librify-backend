@@ -30,11 +30,11 @@ module.exports = class Server {
 	}
 
 	waitForData(req) {
-		let data = "";
+		let buffer = Buffer.from("");
 		
 		return new Promise(success => {
-			req.on("data", chunk => data += chunk);
-			req.on("end", () => success(data));
+			req.on("data", chunk => buffer = Buffer.concat([buffer, chunk]));
+			req.on("end", () => success(buffer));
 		});
 	}
 
