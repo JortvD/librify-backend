@@ -44,7 +44,7 @@ module.exports = class RegistryApiServer {
 		}
 
 		this.app.registry.users.create({username, password})
-		.then(() => res.end(JSON.stringify({status: 200})))
+		.then(user => res.end(JSON.stringify({status: 200, username: user.username})))
 		.catch(error => {
 			console.error(error);
 			
@@ -71,7 +71,7 @@ module.exports = class RegistryApiServer {
 				res.statusCode = 400; 
 				res.end(JSON.stringify({status: 400, message: "The username and/or password is incorrect"}));
 			}
-			else res.end(JSON.stringify({status: 200, token}))
+			else res.end(JSON.stringify({status: 200, token, username}))
 		})
 		.catch(error => {
 			console.error(error);
