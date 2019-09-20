@@ -81,7 +81,7 @@ module.exports = class RegistryManager {
 			await util.promisify(fs.mkdir)(folder);
 		}
 
-		let file = path.join(folder, `${librimod.name}-${librimod.version}.tar.gz`);
+		let file = path.join(folder, `${librimod.name}-${config.version}.tar.gz`);
 
 		await util.promisify(fs.writeFile)(file, data);
 
