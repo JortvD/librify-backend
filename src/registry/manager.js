@@ -3,6 +3,7 @@ const path = require("path");
 const util = require("util");
 const semver = require("semver");
 const RegistryApiServer = require("../net/registry/api");
+const RegistryDownloadServer = require("../net/registry/download");
 const RegistryUserManager = require("./user/manager");
 const DatabaseHandler = require("../db/handler");
 
@@ -13,6 +14,7 @@ module.exports = class RegistryManager {
 		this.db = new DatabaseHandler("librimods");
 		this.users = new RegistryUserManager(this.app);
 		this.apiServer = new RegistryApiServer(this.app);
+		this.downloadServer = new RegistryDownloadServer(this.app);
 	}
 
 	async initialize() {
@@ -20,6 +22,7 @@ module.exports = class RegistryManager {
 		this.collection = this.db.collection("registry");
 		this.users.initialize();
 		this.apiServer.initialize();
+		this.downloadServer.initialize();
 	}
 
 	async terminate() {
