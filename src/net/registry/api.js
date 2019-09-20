@@ -29,10 +29,17 @@ module.exports = class RegistryApiServer {
 		let username = data.username;
 		let password = data.password;
 
+		if(username === undefined || password === undefined) {
+			res.statusCode = 400;
+
+			return res.end(JSON.stringify({status: 400, message: "The username and/or password were not supplied"}));
+		}
+
 		let user = await this.app.registry.users.get(username);
 
 		if(user) {
 			res.statusCode = 400; 
+
 			return res.end(JSON.stringify({status: 400, message: "The username is already used"}));
 		}
 
@@ -51,6 +58,12 @@ module.exports = class RegistryApiServer {
 
 		let username = data.username;
 		let password = data.password;
+
+		if(username === undefined || password === undefined) {
+			res.statusCode = 400; 
+			
+			return res.end(JSON.stringify({status: 400, message: "The username and/or password is incorrect"}));
+		} 
 
 		this.app.registry.users.login({username, password})
 		.then(token => {
@@ -90,6 +103,11 @@ module.exports = class RegistryApiServer {
 		let user = await this.app.registry.users.getFromToken(this.app.server.getToken(req));
 
 		data = data.split("\n\n");
+		if(user === undefined) {
+			res.statusCode = 400;
+
+			return res.end(JSON.stringify({status: 400, message: "The supplied token was incorrect"}));
+		}
 
 		let config;
 		let zip = data[1];
