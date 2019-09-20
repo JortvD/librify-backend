@@ -103,13 +103,13 @@ module.exports = class RegistryApiServer {
 			return res.end(JSON.stringify({status: 400, message: "The config was incorrect"}));
 		}
 
-		if(config.author !== user.username) {
+		if(config.author !== user.username && config.contributors !== undefined && !config.contributors.includes(user.username)) {
 			res.statusCode = 403;
 
-			return res.end(JSON.stringify({status: 403, message: "You aren't the author of this librimod"}));
+			return res.end(JSON.stringify({status: 403, message: "You aren't a contributor or the author of this librimod"}));
 		}
 
-		this.app.registry.publish(config, zip)
+		this.app.registry.publish(config, zip, user)
 		.then(name => {
 			if(name === undefined) {
 				res.statusCode = 400;

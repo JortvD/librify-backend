@@ -31,7 +31,7 @@ module.exports = class RegistryManager {
 		return this.collection.findOne({name});
 	}
 
-	async publish(config, data) {
+	async publish(config, data, user) {
 		if(config.name === undefined || !semver.valid(config.version) || config.author === undefined) return;
 
 		let librimod = await this.get(config.name);
@@ -41,6 +41,7 @@ module.exports = class RegistryManager {
 				name: config.name,
 				version: config.version,
 				author: config.author,
+				contributors: config.contributors || [],
 				versions: [{value: config.version, createdAt: new Date().getTime(), updatedAt: new Date().getTime()}],
 				createdAt: new Date().getTime(),
 				updatedAt: new Date().getTime()
@@ -49,6 +50,8 @@ module.exports = class RegistryManager {
 			await this.collection.insertOne(librimod);
 		}
 		else {
+			if(librimod.author !== user.username && !librimod.contributors.includes(user.username)) return;
+
 			if(semver.gt(config.version, librimod.version)) {
 				librimod.version = config.version;
 			}
@@ -61,6 +64,10 @@ module.exports = class RegistryManager {
 				newVersion.updatedAt = new Date().getTime();
 
 				librimod.versions = librimod.versions.map(version => version.value === config.version ? newVersion : version);
+			}
+
+			if(librimod.contributors !== config.contributors && librimod.author === user.username) {
+				librimod.contributors = config.contributors || [];
 			}
 
 			librimod.updatedAt = new Date().getTime();
