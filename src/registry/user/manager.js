@@ -35,10 +35,13 @@ module.exports = class RegistryUserManager {
 		return user;
 	}
 
-	create({username, password}) {
+	async create({username, password}) {
 		let hashedPassword = crypto.createHash("sha512").update(password).digest("hex");
+		let user = {username, password: hashedPassword, tokens: {}}
 
-		return this.collection.insertOne({username, password: hashedPassword, tokens: {}});
+		await this.collection.insertOne(user);
+
+		return user;
 	}
 
 	async login({username, password}) {
