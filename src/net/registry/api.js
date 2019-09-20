@@ -49,7 +49,7 @@ module.exports = class RegistryApiServer {
 			console.error(error);
 			
 			res.statusCode = 500; 
-			res.end(JSON.stringify({status: 500, message: "Something went wrong"}));
+			res.end(JSON.stringify({status: 500, message: "The server has made an oopsy"}));
 		});
 	}
 
@@ -77,7 +77,7 @@ module.exports = class RegistryApiServer {
 			console.error(error);
 
 			res.statusCode = 500; 
-			res.end(JSON.stringify({status: 500, message: "Something went wrong"}));
+			res.end(JSON.stringify({status: 500, message: "The server has made an oopsy"}));
 		});
 	}
 
@@ -94,7 +94,7 @@ module.exports = class RegistryApiServer {
 			console.error(error);
 
 			res.statusCode = 500; 
-			res.end(JSON.stringify({status: 500, message: "Something went wrong"}));
+			res.end(JSON.stringify({status: 500, message: "The server has made an oopsy"}));
 		});
 	}
 
@@ -139,7 +139,7 @@ module.exports = class RegistryApiServer {
 			console.error(error);
 
 			res.statusCode = 500; 
-			res.end(JSON.stringify({status: 500, message: "Something went wrong"}));
+			res.end(JSON.stringify({status: 500, message: "The server has made an oopsy"}));
 		});
 	}
 }
