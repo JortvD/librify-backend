@@ -102,7 +102,6 @@ module.exports = class RegistryApiServer {
 		let data = await this.app.server.waitForData(req);
 		let user = await this.app.registry.users.getFromToken(this.app.server.getToken(req));
 
-		data = data.split("\n\n");
 		if(user === undefined) {
 			res.statusCode = 400;
 
@@ -110,10 +109,11 @@ module.exports = class RegistryApiServer {
 		}
 
 		let config;
-		let zip = data[1];
+		let configData = String(data).split("\n\n").shift();
+		let zip = data.slice(configData.length + 2);
 
 		try {
-			config = JSON.parse(data[0]);
+			config = JSON.parse(configData);
 		} 
 		catch {
 			res.statusCode = 400;
