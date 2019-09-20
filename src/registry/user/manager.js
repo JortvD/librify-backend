@@ -18,16 +18,21 @@ module.exports = class RegistryUserManager {
 	}
 
 	async getFromToken(token) {
-		let username;
+		let payload;
 		
 		try {
-			username = (await util.promisify(jwt.verify)(token, keys.secret)).iss;
+			payload = await util.promisify(jwt.verify)(token, keys.secret);
 		}
 		catch {
 			return;
 		}
 
-		return await this.get(username);
+		let user = await this.get(payload.iss);
+
+		if(user === undefined) return;
+		if(user.tokens[payload.sub] === undefined) return;
+
+		return user;
 	}
 
 	create({username, password}) {
