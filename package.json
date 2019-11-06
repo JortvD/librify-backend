@@ -7,6 +7,10 @@
     "type": "git",
     "url": "git+https://github.com/JortvD/librify-backend.git"
   },
+  "scripts": {
+    "dev": "cross-env NODE_ENV=development npm run start",
+    "start": "node index"
+  },
   "keywords": [
     "back-end",
     "librify"
@@ -23,7 +27,8 @@
     "pretty-ms": "^5.0.0",
     "semver": "^6.3.0",
     "shortid": "^2.2.15",
-    "to-semver": "^2.0.0"
+    "to-semver": "^2.0.0",
+    "winston": "^3.2.1"
   },
   "devDependencies": {
     "cross-env": "^6.0.3"
