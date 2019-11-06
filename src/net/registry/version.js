@@ -11,6 +11,8 @@ module.exports = class RegistryVersionServer {
 	}
 
 	async handle(req, res) {
+		this.app.logger.timing("RegistryVersionServer.handle");
+
 		let pathname = url.parse(req.url).pathname;
 		pathname = pathname.substring("/registry/version/".length, pathname.length);
 
@@ -20,6 +22,8 @@ module.exports = class RegistryVersionServer {
 			res.statusCode = 400;
 			res.end(JSON.stringify({status: 400, message: "The requested query is incorrect"}));
 
+			this.app.logger.warn(`version request denied (incorrect query) in ${this.logger.timing("RegistryVersionServer.handle")}`);
+
 			return;
 		}
 
@@ -28,6 +32,8 @@ module.exports = class RegistryVersionServer {
 		if(librimod == undefined) {
 			res.statusCode = 404;
 			res.end(JSON.stringify({status: 404, message: "The requested librimod doesn't exist"}));
+
+			this.app.logger.warn(`version request denied (non-existant librimod) in ${this.logger.timing("RegistryVersionServer.handle")}`);
 			
 			return;
 		}
@@ -35,5 +41,7 @@ module.exports = class RegistryVersionServer {
 		let versions = toSemver(librimod.versions.map(version => version.value));
 
 		res.end(versions[0]);
+
+		this.app.logger.debug(`version request for ${librimod.name} successfully handled in ${this.app.logger.timing("RegistryVersionServer.handle")}`);
 	}
 }

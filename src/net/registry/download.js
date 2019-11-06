@@ -14,6 +14,8 @@ module.exports = class RegistryDownloadServer {
 	}
 
 	async handle(req, res) {
+		this.app.logger.timing("RegistryDownloadServer.handle");
+
 		let pathname = url.parse(req.url).pathname;
 		pathname = pathname.substring("/registry/download/".length, pathname.length);
 
@@ -23,6 +25,8 @@ module.exports = class RegistryDownloadServer {
 			res.statusCode = 400;
 			res.end(JSON.stringify({status: 400, message: "The requested query is incorrect"}));
 
+			this.app.logger.warn(`download request denied (incorrect query) in ${this.logger.timing("RegistryDownloadServer.handle")}`);
+
 			return;
 		}
 
@@ -31,9 +35,13 @@ module.exports = class RegistryDownloadServer {
 		if(librimod == undefined) {
 			res.statusCode = 404;
 			res.end(JSON.stringify({status: 404, message: "The requested librimod doesn't exist"}));
+
+			this.app.logger.warn(`download request denied (non-existant librimod) in ${this.logger.timing("RegistryDownloadServer.handle")}`);
 			
 			return;
 		}
+
+		this.app.logger.timingMove("RegistryDownloadServer.handle", `RegistryDownloadServer.handle.${librimod.name}`);
 
 		let versions = librimod.versions.map(version => version.value);
 		let version;
@@ -48,6 +56,8 @@ module.exports = class RegistryDownloadServer {
 		if(!version) {
 			res.statusCode = 404;
 			res.end(JSON.stringify({status: 404, message: "The requested version is not available"}));
+
+			this.app.logger.warn(`download request denied for ${librimod.name} (non-existant version) in ${this.app.logger.timing(`RegistryDownloadServer.handle.${librimod.name}`)}`);
 			
 			return;
 		}
@@ -55,6 +65,10 @@ module.exports = class RegistryDownloadServer {
 		res.setHeader("Content-Type", "application/x-gtar");
 		res.setHeader("Content-Disposition", `attachment; filename=${librimod.name}-${version}.tar.gz`);
 
-		fs.createReadStream(path.join(this.app.root, `./data/librimods/${librimod.name}/${librimod.name}-${version}.tar.gz`)).pipe(res);
+		let stream = fs.createReadStream(path.join(this.app.root, `./data/librimods/${librimod.name}/${librimod.name}-${version}.tar.gz`));
+		stream.pipe(res);
+		stream.on("close", () => {
+			this.app.logger.debug(`download request for ${librimod.name} successfully handled in ${this.app.logger.timing(`RegistryDownloadServer.handle.${librimod.name}`)}`);
+		});
 	}
 }

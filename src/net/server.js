@@ -3,7 +3,8 @@ const url = require("url");
 const util = require("util");
 
 module.exports = class Server {
-	constructor() {
+	constructor(app) {
+		this.app = app;
 		this.server = http.createServer((req, res) => this.handle(req, res).catch(e => {throw e}));
 		this.routes = [];
 	}
@@ -13,8 +14,9 @@ module.exports = class Server {
 	}
 
 	async handle(req, res) {
-		
 		let path = url.parse(req.url).pathname;
+		
+		this.app.logger.debug(`request received for ${path}`);
 
 		for(let route of this.routes) {
 			if(((route.path.endsWith("*") && path.startsWith(route.path.substring(0, route.path.length - 1))) || route.path === path) && (route.method === req.method || route.method === "ALL")) {
@@ -59,11 +61,19 @@ module.exports = class Server {
 		return authorizationArgs[1];
 	}
 	
-	start() {
-		return util.promisify(this.server.listen.bind(this.server))(80);
+	async start() {
+		this.app.logger.timing("Server.start");
+
+		await util.promisify(this.server.listen.bind(this.server))(80);
+
+		this.app.logger.debug(`started server in ${this.app.logger.timing("Server.start")}`);
 	}
 
-	stop() {
-		return util.promisify(this.server.close)();
+	async stop() {
+		this.app.logger.timing("Server.stop");
+
+		await util.promisify(this.server.close.bind(this.server))();
+
+		this.app.logger.debug(`stopped server in ${this.app.logger.timing("Server.stop")}`);
 	}
 }

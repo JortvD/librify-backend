@@ -1,7 +1,8 @@
 const MongoClient = require("mongodb").MongoClient;
 
 module.exports = class DatabaseHandler {
-	constructor(databaseName) {
+	constructor(app, databaseName) {
+		this.app = app;
 		this.databaseName = databaseName;
 		this.client = new MongoClient("mongodb://localhost:27017/", {
 			useNewUrlParser: true,
@@ -10,14 +11,22 @@ module.exports = class DatabaseHandler {
 	}
 
 	async connect() {
-		this.db = (await this.client.connect()).db("librimods");
+		this.app.logger.timing("DatabaseHandler.connect");
+
+		this.db = (await this.client.connect()).db(this.databaseName);
+
+		this.app.logger.debug(`connected to database ${this.databaseName} in ${this.app.logger.timing("DatabaseHandler.connect")}`);
 	}
 
 	collection(name) {
 		return this.db.collection(name);
 	}
 
-	close() {
-		return this.client.close();
+	async close() {
+		this.app.logger.timing("DatabaseHandler.close");
+
+		await this.client.close();
+
+		this.app.logger.debug(`closed database ${this.databaseName} in ${this.app.logger.timing("DatabaseHandler.close")}`);
 	}
 }

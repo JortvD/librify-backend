@@ -12,7 +12,7 @@ module.exports = class RegistryManager {
 	constructor(app) {
 		this.app = app;
 
-		this.db = new DatabaseHandler("librimods");
+		this.db = new DatabaseHandler(this.app, "librimods");
 		this.users = new RegistryUserManager(this.app);
 		this.apiServer = new RegistryApiServer(this.app);
 		this.downloadServer = new RegistryDownloadServer(this.app);
@@ -20,16 +20,24 @@ module.exports = class RegistryManager {
 	}
 
 	async initialize() {
+		this.app.logger.timing("RegistryManager.initialize");
+
 		await this.db.connect();
 		this.collection = this.db.collection("registry");
 		this.users.initialize();
 		this.apiServer.initialize();
 		this.downloadServer.initialize();
 		this.versionServer.initialize();
+
+		this.app.logger.debug(`initialized registry in ${this.app.logger.timing("RegistryManager.initialize")}`);
 	}
 
 	async terminate() {
+		this.app.logger.timing("RegistryManager.terminate");
+
 		await this.db.close();
+
+		this.app.logger.debug(`terminated registry in ${this.app.logger.timing("RegistryManager.terminate")}`);
 	}
 	
 	get(name) {
@@ -37,6 +45,8 @@ module.exports = class RegistryManager {
 	}
 
 	async publish(config, data, user) {
+		this.app.logger.timing("RegistryManager.publish");
+
 		if(config.name === undefined || !semver.valid(config.version) || config.author === undefined) return;
 
 		let librimod = await this.get(config.name);
@@ -89,6 +99,8 @@ module.exports = class RegistryManager {
 		let file = path.join(folder, `${librimod.name}-${config.version}.tar.gz`);
 
 		await util.promisify(fs.writeFile)(file, data);
+
+		this.app.logger.debug(`published librimod ${librimod.name} in ${this.app.logger.timing("RegistryManager.publish")}`);
 
 		return librimod.name;
 	}
