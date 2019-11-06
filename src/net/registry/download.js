@@ -1,6 +1,8 @@
 const url = require("url");
 const fs = require("fs");
 const path = require("path");
+const toSemver = require("to-semver");
+const semver = require("semver");
 
 module.exports = class RegistryDownloadServer {
 	constructor(app) {
@@ -33,7 +35,15 @@ module.exports = class RegistryDownloadServer {
 			return;
 		}
 
-		let version = librimod.versions.find(version => version.value === args[1]);
+		let versions = librimod.versions.map(version => version.value);
+		let version;
+
+		if(args[1] === "latest" || args[1] === undefined) {
+			version = toSemver(versions, {includePrereleases: false})[0];
+		}
+
+		if(!version) version = versions.find(version => version === args[1]);
+		if(!version) version = toSemver(versions).find(version => semver.satisfies(version, args[1]));
 
 		if(!version) {
 			res.statusCode = 404;
@@ -43,8 +53,8 @@ module.exports = class RegistryDownloadServer {
 		}
 
 		res.setHeader("Content-Type", "application/x-gtar");
-		res.setHeader("Content-Disposition", `attachment; filename=${librimod.name}-${version.value}.tar.gz`);
+		res.setHeader("Content-Disposition", `attachment; filename=${librimod.name}-${version}.tar.gz`);
 
-		fs.createReadStream(path.join(this.app.root, `./data/librimods/${librimod.name}/${librimod.name}-${version.value}.tar.gz`)).pipe(res);
+		fs.createReadStream(path.join(this.app.root, `./data/librimods/${librimod.name}/${librimod.name}-${version}.tar.gz`)).pipe(res);
 	}
 }
