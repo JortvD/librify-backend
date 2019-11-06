@@ -15,7 +15,7 @@ module.exports = class RegistryDownloadServer {
 
 	async handle(req, res) {
 		let pathname = url.parse(req.url).pathname;
-		pathname = pathname.substring("/registry/download/".length, path.length);
+		pathname = pathname.substring("/registry/download/".length, pathname.length);
 
 		let args = pathname.split("/");
 
