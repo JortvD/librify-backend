@@ -4,6 +4,7 @@ const util = require("util");
 const semver = require("semver");
 const RegistryApiServer = require("../net/registry/api");
 const RegistryDownloadServer = require("../net/registry/download");
+const RegistryVersionServer = require("../net/registry/version");
 const RegistryUserManager = require("./user/manager");
 const DatabaseHandler = require("../db/handler");
 
@@ -15,6 +16,7 @@ module.exports = class RegistryManager {
 		this.users = new RegistryUserManager(this.app);
 		this.apiServer = new RegistryApiServer(this.app);
 		this.downloadServer = new RegistryDownloadServer(this.app);
+		this.versionServer = new RegistryVersionServer(this.app);
 	}
 
 	async initialize() {
@@ -23,12 +25,12 @@ module.exports = class RegistryManager {
 		this.users.initialize();
 		this.apiServer.initialize();
 		this.downloadServer.initialize();
+		this.versionServer.initialize();
 	}
 
 	async terminate() {
 		await this.db.close();
 	}
-
 	
 	get(name) {
 		return this.collection.findOne({name});
