@@ -42,7 +42,7 @@ module.exports = class Server {
 
 	async waitForJSONData(req) {
 		try {
-			return JSON.parse(await this.waitForData(req));
+			return JSON.parse((await this.waitForData(req)).toString());
 		}
 		catch {
 			return {};
