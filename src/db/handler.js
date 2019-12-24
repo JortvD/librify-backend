@@ -18,6 +18,14 @@ module.exports = class DatabaseHandler {
 		this.app.logger.debug(`connected to database ${this.databaseName} in ${this.app.logger.timing("DatabaseHandler.connect")}`);
 	}
 
+	async terminate() {
+		this.app.logger.timing("DatabaseHandler.terminate");
+
+		await this.app.db.close();
+
+		this.app.logger.debug(`terminated database in ${this.app.logger.timing("DatabaseHandler.terminate")}`);
+	}
+
 	collection(name) {
 		return this.db.collection(name);
 	}

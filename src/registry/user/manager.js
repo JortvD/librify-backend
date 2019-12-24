@@ -10,7 +10,7 @@ module.exports = class RegistryUserManager {
 	}
 
 	initialize() {
-		this.collection = this.app.registry.db.collection("users");
+		this.collection = this.app.db.collection("users");
 	}
 
 	get(username) {
