@@ -19,12 +19,16 @@ module.exports = class GameManager {
 		this.app.logger.debug(`initialized games in ${this.app.logger.timing("GameManager.initialize")}`);
 	}
 
-	add({name, version}) {
-		return this.collection.insertOne({name, version, id: shortid()});
+	async add({name, version}) {
+		const game = {name, version, id: shortid()};
+
+		await this.collection.insertOne(game);
+
+		return game;
 	}
 
-	get({id, name}) {
-		return this.collection.findOne({id, name});
+	get(query) {
+		return this.collection.findOne(query);
 	}
 
 	async update(game, version) {
