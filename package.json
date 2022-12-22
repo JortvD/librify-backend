@@ -23,7 +23,7 @@
   "homepage": "https://github.com/JortvD/librify-backend#readme",
   "dependencies": {
     "async-exit-hook": "^2.0.1",
-    "jsonwebtoken": "^8.5.1",
+    "jsonwebtoken": "^9.0.0",
     "mongodb": "^3.3.2",
     "pretty-ms": "^5.0.0",
     "semver": "^6.3.0",
